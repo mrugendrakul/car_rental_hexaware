@@ -26,7 +26,9 @@ while True:
         print("2) Remove Customer")
         print("3) List Customer")
         print("4) Find Customer")
-        print("5) Back")
+        print("5) Update Customer")
+        print("6) Delete Customer")
+        print("7) Back")
         sub_option = int(input("Option : "))
 
         # Add customer
@@ -75,8 +77,23 @@ while True:
             except Exception as e:
                 print(f"Error encountered while finding customers : {e}")
 
-        # continue
+        #Update Customer
         elif sub_option == 5:
+            customerID = int(input("Customer to update : "))
+            try:
+                customer_manage.update_customer(customer_id=customerID)
+            except Exception as e:
+                print(f"Error encountered while updating customers : {e}")
+
+        elif sub_option == 6:
+            customerID = int(input("Customer to Delete : "))
+            try:
+                customer_manage.delete_customer(customerID=customerID)
+            except Exception as e:
+                print(f"Error encountered while updating customers : {e}")
+
+        # continue
+        elif sub_option == 7:
             continue
         else:
             print("select valid option")
@@ -90,7 +107,8 @@ while True:
         print("3) List Rented car")
         print("4) List Available car")
         print("5) Remove car")
-        print("6) Back")
+        print("6) Update car")
+        print("7) Back")
 
         sub_option = int(input("Option : "))
 
@@ -155,7 +173,15 @@ while True:
             except Exception as e:
                 print(f"Error encountered while removing car : {e}")
 
-        elif sub_option == 6:
+        elif sub_option == 6 :
+            carID = int(input("Car ID to update (Verify from list cars) : "))
+            try:
+                result = car_manage.update_car(carID)
+                print("Successfully Updated car")
+            except Exception as e:
+                print(f"Error encountered while updating car : {e}")
+
+        elif sub_option == 7:
             continue
 
         else:

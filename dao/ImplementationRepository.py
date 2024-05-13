@@ -16,7 +16,7 @@ class CarManagementImplementation(CarManagement):
             f'insert into vehicle_table(make,model,Year,dailyRate,status,passenger_capacity, engine_capacity) VALUES (\'{carInfo['make']}\',\'{carInfo['model']}\',\'{carInfo['Year']}-01-01\',{carInfo['dailyRate']},{carInfo['status']},{carInfo['passenger_capacity']},{carInfo['engine_capacity']});')
         row = stmt.fetchall()
         conn.commit()
-        return row
+        return "Car added successfully"
 
     def findCarsById(self, carID):
         # conn = self.conn
@@ -26,7 +26,7 @@ class CarManagementImplementation(CarManagement):
         carRet = []
         for i in row:
             carRet.append(Car(i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]))
-        if not carRet:
+        if len(carRet) == 0:
             raise CarNotFoundException()
         return carRet
 
@@ -38,7 +38,7 @@ class CarManagementImplementation(CarManagement):
         carRet = []
         for i in row:
             carRet.append(Car(i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]))
-        if not carRet:
+        if len(carRet) == 0:
             raise CarNotFoundException()
         return carRet
 
@@ -50,18 +50,56 @@ class CarManagementImplementation(CarManagement):
         carRet = []
         for i in row:
             carRet.append(Car(i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]))
-
-        if not carRet:
+        if len(carRet) == 0:
             raise CarNotFoundException()
         return carRet
 
     def removeCar(self, carId):
+        self.findCarsById(carId)
         # conn = self.conn
         stmt = conn.cursor()
         stmt.execute(f'delete from vehicle_table where vehicleID = {carId};')
         row = stmt.fetchall()
         conn.commit()
         return row
+
+    def update_car(self,carID):
+        cars = self.findCarsById(carID)
+        for car in cars:
+            print(car.get_car_details())
+        print("Select value to update ")
+        print("1) Make")
+        print("2) Model")
+        print("3) Year")
+        print("4) Daily Rate")
+        print("5) Status")
+        print("6) Passenger Capacity")
+        print("7) Engine Capacity")
+        val_change = "not selected "
+        option = int(input("Option : "))
+        if option == 1:
+            val_change = "make"
+        elif option == 2:
+            val_change = "model"
+        elif option == 3:
+            val_change = "Year"
+        elif option == 4:
+            val_change = "dailyRate"
+        elif option == 5:
+            val_change = "status"
+        elif option == 6:
+            val_change = "passenger_capacity"
+        elif option == 7:
+            val_change = "engine_capacity"
+
+        value = input(f"New Value for the {val_change} : ")
+        if option == 3:
+            value = value + "-01-01"
+        stmt = conn.cursor()
+
+        stmt.execute(f"update vehicle_table set {val_change} = '{value}' where vehicleID = {carID};")
+        conn.commit()
+        print("Value updated successfully")
 
 
 class CustomerManagementImplementation(CustomerManagement):
@@ -77,6 +115,7 @@ class CustomerManagementImplementation(CustomerManagement):
         return row
 
     def removeCustomer(self, customerID):
+        self.findCustomer(customerID)
         # conn = self.conn
         stmt = conn.cursor()
         stmt.execute(f"delete from customer_table where customerID = {customerID};")
@@ -93,15 +132,49 @@ class CustomerManagementImplementation(CustomerManagement):
         for i in rows:
             temp_cust.append(Customer(i[0], i[1], i[2], i[3], i[4]))
 
-        if not temp_cust:
+        if len(temp_cust) == 0:
             raise CustomerrNotFoundException()
         return temp_cust
+
+    def update_customer(self,customer_id):
+        self.findCustomer(customer_id)
+        print("Select value to update ")
+        print("1) First name")
+        print("2) Last name")
+        print("3) Email")
+        print("4) Phone Number")
+        val_change = "not selected "
+        option = int(input("Option : "))
+        if option == 1:
+            val_change = "first_name"
+        elif option == 2:
+            val_change = "last_name"
+        elif option == 3:
+            val_change = "email"
+        elif option == 4:
+            val_change = "phone_number"
+
+        value = input(f"New Value for the {val_change} : ")
+        stmt = conn.cursor()
+
+        stmt.execute(f"update customer_table set {val_change} = '{value}' where customerID = {customer_id};")
+        conn.commit()
+        print("Value updated successfully")
+
+    def delete_customer(self,customerID):
+        self.findCustomer(customerID)
+        stmt = conn.cursor()
+        stmt.execute(f"delete from customer_table where customerID = {customerID};")
+        conn.commit()
+        print("Customer Deleted Successfully")
 
     def findCustomer(self, customerID):
         stmt = conn.cursor()
         temp_cust = []
         stmt.execute(f"select * from customer_table where customerID = {customerID}")
         rows = stmt.fetchall()
+        if len(rows) == 0:
+            raise CustomerrNotFoundException()
         for i in rows:
             temp_cust.append(Customer(i[0], i[1], i[2], i[3], i[4]))
         return temp_cust
@@ -110,11 +183,14 @@ class CustomerManagementImplementation(CustomerManagement):
 class LeaseManagementImplementation(LeaseManagement):
     def createLease(self, customerID, carID, startDate, endDate, type):
         stmt = conn.cursor()
-        stmt.execute(
+        try:
+            stmt.execute(
             f"insert into lease_table(vehicleId,customerID,startDate,endDate,type) VALUES ( {carID}, {customerID}, \'{startDate}\' ,\'{endDate}\' ,0)")
+        except Exception as e:
+            print(f"Error while creating lease : {e}")
         row = stmt.fetchall()
         conn.commit()
-        return row
+        return "Lease created successfully"
 
     def returnCar(self, leaseID):
         stmt = conn.cursor()
@@ -142,6 +218,7 @@ class LeaseManagementImplementation(LeaseManagement):
         for i in rows:
             temp_lease.append(Lease(i[0], i[1], i[2], i[3], i[4], i[5]))
         return temp_lease
+
 
 class PaymentManagementImplementation(PaymentHandling):
 

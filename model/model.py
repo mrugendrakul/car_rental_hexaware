@@ -1,3 +1,4 @@
+#Car model to use in the code
 class Car:
     def __init__(self, vehicleID, make, model, Year, dailyRate, status, passenger_capacity, engine_capacity):
         self.__vehicleID = vehicleID
@@ -16,6 +17,7 @@ class Car:
 
         self.__engine_capacity = engine_capacity
 
+    #Used for getting the car details
     def get_car_details(self):
         return {"vehicleID":self.__vehicleID,"make": self.__make,"model": self.__model, "Year":self.__Year, "dailyRate":self.__dailyRate, "status" :self.__status,
                 "passenger_capacity":self.__passenger_capacity,"engine_capacity" :self.__engine_capacity}
@@ -61,6 +63,7 @@ class Car:
     def get_engile_capacity(self):
         return self.__engine_capacity
 
+#Customer model to use data
 class Customer:
     def __init__(self,customerID,first_name,last_name,email,phoneNumber):
         self.__customerID = customerID
@@ -75,6 +78,7 @@ class Customer:
     def get_customerID(self):
         return self.__customerID
 
+#Lease entity to get the data
 class Lease:
     def __init__(self,leaseID ,vehicleId,customerID,startDate,endDate,type):
         self.__leaseId = leaseID
